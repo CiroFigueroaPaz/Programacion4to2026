@@ -134,19 +134,39 @@ sucursales = {"Oeste": ["Merlo", "Castelar", "Ramos Mejía"],
 
 # FUNCIÓN PARA BUSCAR USUARIO POR DNI
 def buscarUsuarioPorDni(nroBuscado):
-  print("\nBuscando usuario...")
+  print("buscando usuario")
+  for usuario in usuarios:
+    if usuario["Dni"] == nroBuscado:
+      print("Usuario Encontrado")
+      return usuario
 
 # FUNCIÓN PARA CONSULTAR EL SALDO
 def consultarSaldo(usuario):
   print("\nConsultando Saldo...")
+  print("Saldo Actual: $" + str(usuario['Saldo']))
 
 # FUNCIÓN PARA CONSULTAR FACTURAS
 def consultarFacturas(usuario):
   print("\nConsultando Facturas...")
+  contador = 1
+  for factura in usuario['FacturasAdeudadas']:
+    print("\n" + str(contador) + ". || " + str(factura['Servicio'])+ " ||" +
+    "\n" + "Fecha de Vencimiento: " +str(factura['Vencimiento']) +
+    "\n" + "Cantidad que saldar:" + str(factura['Valor']))
+    contador = contador + 1
+   
+
 
 # FUNCIÓN PARA PAGAR FACTURAS
 def pagarFacturas(usuario):
   print("\nPagando Facturas...")
+  for factura in usuario['FacturasAdeudadas']:
+    if factura['Valor'] < usuario['Saldo']:
+      usuario['Saldo'] = usuario['Saldo'] - factura['Valor']
+      print("\nSe ha pagado la factura: " + str(factura['Servicio']))
+      usuario['FacturasAdeudadas'].remove(factura)
+    else:
+      print("\nSaldo insuficiente")
 # LAS FACTURAS SOLO SE PAGAN SI TIENES SALDO SUFICIENTE
 # SI LAS FACTURAS SE PAGAN, SE BORRAN DEL DICCIONARIO
 
@@ -163,14 +183,19 @@ def sacarTurno():
 # --- INTERACCIONES DEL CHATBOT ---
 
 # MENSAJE INICIAL
-  print("\n**¡Hola! Soy Telmo, tu asistente virtual**")
+print("\n**¡Hola! Soy Telmo, tu asistente virtual**")
 
 # SOLICITAR DNI CON input() Y ALMACENARLO EN UNA VARIABLE
 
+print("Ingrese su DNI")
+dniUsuario = int(input())
+
 # BUSCAR USUARIO SEGÚN SU DNI Y ALMACENARLO EN UNA VARIABLE LLAMADA "usuarioActual"
 
-# SALUDAR AL "usuarioActual" SEGÚN SU NOMBRE
+usuarioActual = buscarUsuarioPorDni(dniUsuario)
 
+# SALUDAR AL "usuarioActual" SEGÚN SU NOMBRE
+print("Hola " + usuarioActual['Nombre'] + "!")
 
 # BUCLE DEL CHATBOT - PERMITIR ELEGIR OPCIONES HASTA QUE DESEE TERMINAR
 
@@ -186,6 +211,10 @@ while continuar == "SI":
   5. Solicitar un turno
   >>>>>>>>>>>>: """)
 
+  if opcion == "1":
+    consultarSaldo(usuarioActual)
+  elif opcion == "2":
+    consultarFacturas(usuarioActual)
 # VERIFICAR QUE LA OPCIÓN INGRESADA SEA CORRECTA
 
 # USAR UN CONDICIONAL PARA EJECUTAR LA FUNCIÓN QUE CORRESPONDA SEGÚN LA ELECCIÓN
@@ -196,3 +225,5 @@ while continuar == "SI":
 
 # CUANDO TERMINA EL BUCLE, SE MUESTRA UN MENSAJE DE DESPEDIDA
 print("\n**¡Gracias por utilizar el servicio de autogestión!**")
+
+

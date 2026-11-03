@@ -152,7 +152,7 @@ def consultarFacturas(usuario):
   for factura in usuario['FacturasAdeudadas']:
     print("\n" + str(contador) + ". || " + str(factura['Servicio'])+ " ||" +
     "\n" + "Fecha de Vencimiento: " +str(factura['Vencimiento']) +
-    "\n" + "Cantidad que saldar:" + str(factura['Valor']))
+    "\n" + "Cantidad que saldar: $" + str(factura['Valor']))
     contador = contador + 1
    
 
@@ -160,13 +160,13 @@ def consultarFacturas(usuario):
 # FUNCIÓN PARA PAGAR FACTURAS
 def pagarFacturas(usuario):
   print("\nPagando Facturas...")
-  for factura in usuario['FacturasAdeudadas']:
-    if factura['Valor'] < usuario['Saldo']:
+  for factura in usuario['FacturasAdeudadas'][:]:
+    if factura['Valor'] <= usuario['Saldo']:
       usuario['Saldo'] = usuario['Saldo'] - factura['Valor']
       print("\nSe ha pagado la factura: " + str(factura['Servicio']))
       usuario['FacturasAdeudadas'].remove(factura)
     else:
-      print("\nSaldo insuficiente")
+      print('\nSaldo insuficiente para pagar: "' + str(factura['Servicio']) + '"')
 # LAS FACTURAS SOLO SE PAGAN SI TIENES SALDO SUFICIENTE
 # SI LAS FACTURAS SE PAGAN, SE BORRAN DEL DICCIONARIO
 
@@ -198,9 +198,8 @@ usuarioActual = buscarUsuarioPorDni(dniUsuario)
 print("Hola " + usuarioActual['Nombre'] + "!")
 
 # BUCLE DEL CHATBOT - PERMITIR ELEGIR OPCIONES HASTA QUE DESEE TERMINAR
-
-continuar = "SI"
-while continuar == "SI":
+continuar = "S"
+while continuar == "S" or continuar == "s":
   opcion = input("""
   Ingrese el número de opción que desea:
   
@@ -215,13 +214,22 @@ while continuar == "SI":
     consultarSaldo(usuarioActual)
   elif opcion == "2":
     consultarFacturas(usuarioActual)
+  elif opcion == "3":
+    pagarFacturas(usuarioActual)
+  elif opcion == "4":
+    consultarSucursales()
+  elif opcion == "5":
+    sacarTurno
 # VERIFICAR QUE LA OPCIÓN INGRESADA SEA CORRECTA
 
 # USAR UN CONDICIONAL PARA EJECUTAR LA FUNCIÓN QUE CORRESPONDA SEGÚN LA ELECCIÓN
 
 # PREGUNTAR SI DESEA CONTINUAR
-  continuar = "NO"
-
+  print("\n¿Desea continuar?")
+  continuar = input("S/N: ")
+  while continuar != "S" and continuar != "s" and continuar != "N" and continuar != "n":
+    print("Entrada invalida, porfavor intente de nuevo")
+    continuar = input("S/N: ")
 
 # CUANDO TERMINA EL BUCLE, SE MUESTRA UN MENSAJE DE DESPEDIDA
 print("\n**¡Gracias por utilizar el servicio de autogestión!**")
